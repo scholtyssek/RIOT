@@ -18,12 +18,12 @@ QUIET ?= 1
 
 USEMODULE += posix
 USEMODULE += uart0
-#USEMODULE += uart1
-#USEMODULE += transceiver
-#USEMODULE += cc2420
+USEMODULE += cc2420
 USEMODULE += shell
-
 # the uart implementation uses ringbuffer and therefore needs lib
 #USEMODULE += lib
+#USEMODULE += timex
+#USEMODULE += uart1
+#USEMODULE += transceiver
 
 include $(RIOTBASE)/Makefile.include

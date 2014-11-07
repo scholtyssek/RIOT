@@ -29,6 +29,8 @@
 //#include <cpu-conf.h>
 #include "debug.h"
 #include "ps.h"
+#include "periph/spi.h"
+#include "periph/gpio.h"
 
 static void testCommand(int argc, char **argv) {
 	(void) argc; /* the function takes no arguments */
@@ -73,10 +75,11 @@ static void startCC2420_thread(void) {
 }
 
 int main(void) {
-//	uart_init()
+	board_init();
 	puts("Hello World!");
 
-	board_init();
+//	uart_init();
+
 //	GPIOD->BSRRL = (uint16_t)0x8000;	// blue LED
 //	GPIOD->BSRRL = ((uint16_t)0x2000);	// orange LED
 
@@ -96,18 +99,37 @@ int main(void) {
 	puts("  shell init");
 	shell_init(&shell, sc, UART0_BUFSIZE, uart0_readc, uart0_putc);
 	puts("  shell run");
+
+	gpio_init_out(GPIO_0, GPIO_PULLUP);
+	gpio_write(GPIO_0, 1);
+
 //	shell_run(&shell);
 //	startCC2420_thread();
+	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_5MHZ);
+	char a = '\0';
+
 
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
+		LD6_ON;	// blue
+
 		sleep(2);
-//		LED_GREEN_OFF;
+
+		LD6_OFF;	// blue
 		LED_RED_OFF;
+//		LED_GREEN_OFF;
 		printf("UART0 Bufsize: %d\n", UART0_BUFSIZE);
 //		thread_print_all();
-		sleep(2);
+
+		cc2420_init(KERNEL_PID_LAST+1);
+
+		gpio_write(GPIO_0, 0);
+		spi_transfer_byte(SPI_0, 't',&a);
+		gpio_write(GPIO_0, 1);
+		if(a != '\0'){
+			sleep(2);
+		}
 	}
 
 	return 0;
