@@ -8,15 +8,21 @@
 #define CC2420_CS_LOW       GPIO_0_PORT->ODR &= ~(1 << GPIO_0_PIN); 	/* PA0 */
 #define CC2420_CS_HIGH     	GPIO_0_PORT->ODR |= (1 << GPIO_0_PIN); 		/* PA0 */
 #define CC2420_RESET_PORT	GPIOA
+#define CC2420_CS_PIN		0											/* PA0 */
 #define CC2420_RESET_PIN	(1 << 1)									/* PA1 */
+#define CC2420_CCA_PIN		(1 << 2)									/* PA2 */
+#define CC2420_SFD_PIN		(1 << 3)									/* PA3 */
+#define CC2420_FIFOP_PIN	(1 << 4)									/* PA4 */
 
 void cc2420_spi_init(void){
+	/* configure necessary pin */
+	// TODO configure RCC and direction for all SPI pins
+
 	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_5MHZ);
 }
 
 uint8_t cc2420_get_cca(void){
-	// TODO
-	return 0;
+	return GPIO_0_PORT->ODR & CC2420_CCA_PIN;
 }
 
 void core_panic(int crash_code, const char *message){
@@ -28,13 +34,11 @@ void cc2420_init_interrupts(void){
 }
 
 uint8_t cc2420_get_sfd(void){
-	// TODO
-	return 0;
+	return GPIO_0_PORT->ODR & CC2420_SFD_PIN;
 }
 
 uint8_t cc2420_get_fifop(void){
-	// TODO
-	return 0;
+	return GPIO_0_PORT->ODR & CC2420_FIFOP_PIN;
 }
 
 void cc2420_spi_select(void){
