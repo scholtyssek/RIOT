@@ -31,6 +31,7 @@
 #include "ps.h"
 #include "periph/spi.h"
 #include "periph/gpio.h"
+#include "cc2420.h"
 
 static void testCommand(int argc, char **argv) {
 	(void) argc; /* the function takes no arguments */
@@ -108,21 +109,21 @@ int main(void) {
 	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_5MHZ);
 	char a = '\0';
 
-
+	cc2420_init(KERNEL_PID_LAST+1);
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
-		LD6_ON;	// blue
+		LD6_OFF;	// blue
 
 		sleep(2);
 
-		LD6_OFF;	// blue
+		LD6_ON;	// blue
 		LED_RED_OFF;
 //		LED_GREEN_OFF;
 		printf("UART0 Bufsize: %d\n", UART0_BUFSIZE);
 //		thread_print_all();
 
-		cc2420_init(KERNEL_PID_LAST+1);
+
 
 		gpio_write(GPIO_0, 0);
 		spi_transfer_byte(SPI_0, 't',&a);
