@@ -89,6 +89,8 @@ extern "C" {
  */
 void board_init(void);
 
+typedef uint8_t radio_packet_length_t;
+
 #ifdef __cplusplus
 }
 #endif
