@@ -50,6 +50,8 @@
  */
 #ifndef UART0_BUFSIZE
 #define UART0_BUFSIZE                   (128)
+
+#define TRANSCEIVER_BUFFER_SIZE (3)
 #endif
 /** @} */
 
