@@ -36,7 +36,7 @@
 static void testCommand(int argc, char **argv) {
 	(void) argc; /* the function takes no arguments */
 	(void) argv;
-	printf("runniing testCommand()\n");
+	printf("running testCommand()\r\n");
 }
 
 static const shell_command_t sc[] = { { "test", "does a test", testCommand }, {
@@ -53,7 +53,7 @@ char appserver_stack[KERNEL_CONF_STACKSIZE_MAIN];
  */
 static void *stm32f4_cc2420_start(void *arg) {
 	while(1){
-		puts("thread is running!");
+		puts("thread is running!\r\n");
 		LED_GREEN_ON;
 		sleep(2);
 //		thread_yield();
@@ -94,7 +94,7 @@ int main(void) {
 	(void) puts("Welcome to RIOT!");
 
 	// start a thread
-	startCC2420_thread();
+//	startCC2420_thread();
 
 
 	puts("  shell init");
@@ -106,10 +106,13 @@ int main(void) {
 
 //	shell_run(&shell);
 //	startCC2420_thread();
-	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_5MHZ);
+
+	// cc2420 radio modul supports up to 10MHz spi clock
+	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
 	char a = '\0';
 
 	cc2420_init(KERNEL_PID_LAST+1);
+	printf("cc2420_init()\r\n");
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
@@ -120,7 +123,7 @@ int main(void) {
 		LD6_ON;	// blue
 		LED_RED_OFF;
 //		LED_GREEN_OFF;
-		printf("UART0 Bufsize: %d\n", UART0_BUFSIZE);
+//		printf("UART0 Bufsize: %d\r\n", UART0_BUFSIZE);
 //		thread_print_all();
 
 

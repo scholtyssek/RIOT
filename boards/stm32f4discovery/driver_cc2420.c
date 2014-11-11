@@ -1,3 +1,15 @@
+/*
+ * This is the driver implementation for the cc2420 radio module.
+ * The configuration is:
+ * 	10 MHz spi clock
+ * 	PA0 - CS
+ * 	PA1 -
+ * 	PA2 -
+ * 	PA3 -
+ * 	PA4 -
+ * 	PA5 -
+ */
+
 #include "cc2420_arch.h"
 #include "periph_conf.h"
 #include "stm32f407xx.h"
