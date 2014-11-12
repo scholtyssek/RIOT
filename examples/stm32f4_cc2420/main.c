@@ -106,13 +106,11 @@ int main(void) {
 
 //	shell_run(&shell);
 //	startCC2420_thread();
-
-	// cc2420 radio modul supports up to 10MHz spi clock
-	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
 	char a = '\0';
 
+	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 	cc2420_init(KERNEL_PID_LAST+1);
-
+	cc2420_on();
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
