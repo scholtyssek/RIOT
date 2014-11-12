@@ -17,6 +17,7 @@
  *
  */
 
+#include <stdio.h>
 #include "cc2420_arch.h"
 #include "periph_conf.h"
 #include "stm32f407xx.h"
@@ -36,10 +37,11 @@
 #define CC2420_FIFOP_PIN	(1 << 8)									/* PA8 */
 
 void cc2420_spi_init(void){
+	printf("cc2420_spi_init()\r\n");
 	/* configure necessary pin */
 	// TODO configure RCC and direction for all SPI pins
 
-	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_5MHZ);
+	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
 }
 
 uint8_t cc2420_get_cca(void){
@@ -47,61 +49,77 @@ uint8_t cc2420_get_cca(void){
 }
 
 uint8_t cc2420_get_sfd(void){
+	printf("cc2420_get_sfd\r\n");
 	return GPIO_0_PORT->ODR & CC2420_SFD_PIN;
 }
 
 uint8_t cc2420_get_fifop(void){
+	printf("cc2420_get_fifop\r\n");
 	return GPIO_0_PORT->ODR & CC2420_FIFOP_PIN;
 }
 
 void cc2420_spi_select(void){
+//	printf("cc2420_spi_select\r\n");
 	CC2420_CS_LOW
 }
 
 void cc2420_spi_unselect(void){
+//	printf("cc2420_spi_unselect\r\n");
 	CC2420_CS_HIGH
 }
 
 void cc2420_reset(void){
+	printf("cc2420_reset\r\n");
 	CC2420_RESET_PORT->BSRRH |= CC2420_RESET_PIN;	// low
 	hwtimer_wait(500);
 	CC2420_RESET_PORT->BSRRL |= CC2420_RESET_PIN;	// high
 }
 
 uint8_t cc2420_txrx(uint8_t c){
+	printf("cc2420_txrx\r\n");
 	char buf = '\0';
-	spi_transfer_byte(SPI_0, c, &buf);
+	buf = spi_transfer_byte(SPI_0, c, &buf);
 	return buf;
 }
 
 
 void core_panic(int crash_code, const char *message){
-	// TODO
+	printf("core_panic occurred. Code %d\r\n", crash_code);
+	// TODO reboot system with software reset
 }
 
 void cc2420_init_interrupts(void){
+	printf("cc2420_init_interrupts\r\n");
 	// TODO
 }
 
 void cc2420_gdo0_enable(void){
+	printf("cc2420_gdo0_enable\r\n");
 	// TODO
 }
 
+/* Disable all interrupts */
+
 void cc2420_gdo0_disable(void){
+	printf("cc2420_gdo0_disable\r\n");
 	// TODO
 }
 
 void cc2420_gdo2_enable(void){
+	printf("cc2420_gdo2_enable");
 	// TODO
 }
 void cc2420_gdo2_disable(void){
+	printf("cc2420_gdo2_disable\r\n");
 	// TODO
 }
 
 void cc2420_before_send(void){
+	printf("cc2420_before_send\r\n");
 	// TODO disable interrupts before send. see header file
 }
 
 void cc2420_after_send(void){
+	printf("cc2420_after_send");
 	// TODO reenable interrupts after send. see header file
 }
