@@ -79,7 +79,7 @@ int main(void) {
 	board_init();
 	puts("Hello World!");
 
-//	uart_init();
+	uart_init();
 
 //	GPIOD->BSRRL = (uint16_t)0x8000;	// blue LED
 //	GPIOD->BSRRL = ((uint16_t)0x2000);	// orange LED
@@ -112,7 +112,7 @@ int main(void) {
 	char a = '\0';
 
 	cc2420_init(KERNEL_PID_LAST+1);
-	printf("cc2420_init()\r\n");
+
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
@@ -125,12 +125,12 @@ int main(void) {
 //		LED_GREEN_OFF;
 //		printf("UART0 Bufsize: %d\r\n", UART0_BUFSIZE);
 //		thread_print_all();
+		sleep(2);
 
 
-
-		gpio_write(GPIO_0, 0);
-		spi_transfer_byte(SPI_0, 't',&a);
-		gpio_write(GPIO_0, 1);
+//		gpio_write(GPIO_0, 0);
+//		spi_transfer_byte(SPI_0, 't',&a);
+//		gpio_write(GPIO_0, 1);
 		if(a != '\0'){
 			sleep(2);
 		}
