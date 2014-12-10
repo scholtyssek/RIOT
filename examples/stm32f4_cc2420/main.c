@@ -108,9 +108,12 @@ int main(void) {
 //	startCC2420_thread();
 	char a = '\0';
 
-	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
+
+//	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
+//	spi_init_master(SPI_0, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
 	cc2420_init(KERNEL_PID_LAST+1);
-	cc2420_on();
+//	cc2420_on();
 	while (1) {
 //		LED_GREEN_ON;
 		LED_RED_ON;
