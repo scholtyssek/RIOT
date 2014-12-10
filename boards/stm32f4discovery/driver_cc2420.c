@@ -28,6 +28,7 @@
 #include "periph/spi.h"
 #include "hwtimer.h"
 #include "radio_driver.h"
+#include "periph/gpio.h"
 
 #define CC2420_CS_LOW       GPIO_0_PORT->ODR &= ~(1 << GPIO_0_PIN); 	/* PA0 */
 #define CC2420_CS_HIGH     	GPIO_0_PORT->ODR |= (1 << GPIO_0_PIN); 		/* PA0 */
@@ -42,6 +43,25 @@
 
 SPI_TypeDef *spi_port = NULL;
 
+
+/**
+ * Initialization function for the STM32F4 pins
+ */
+void init_gpio_pin(GPIO_TypeDef *port, uint8_t pin, gpio_pp_t pullup){
+	  port->MODER &= ~(2 << (2 * pin));           /* set pin to output mode */
+	    port->MODER |= (1 << (2 * pin));
+	    port->OTYPER &= ~(1 << pin);                /* set to push-pull configuration */
+	    port->OSPEEDR |= (3 << (2 * pin));          /* set to high speed */
+	    port->PUPDR &= ~(3 << (2 * pin));           /* configure push-pull resistors */
+	    port->PUPDR |= (pullup << (2 * pin));
+	    port->ODR &= ~(1 << pin);                   /* set pin to low signal */
+}
+
+void init_reset_pin(void){
+	// init cc2240 reset pin PA4
+	init_gpio_pin(GPIOA, 4, GPIO_PULLUP);
+}
+
 void cc2420_spi_init(void) {
 	printf("cc2420_spi_init()\r\n");
 	spi_t dev = SPI_0;
@@ -49,8 +69,8 @@ void cc2420_spi_init(void) {
 	/* configure necessary pin */
 	// TODO configure RCC and direction for all SPI pins
 	// cc2420 radio modul supports up to 10MHz spi clock
-//	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
-	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
+	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+//	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 
 
 	switch (dev) {
@@ -63,6 +83,10 @@ void cc2420_spi_init(void) {
 		return;
 	}
 
+	/*
+	 * IO pin initialization
+	 */
+	init_reset_pin();
 }
 
 uint8_t cc2420_get_cca(void) {
@@ -79,6 +103,10 @@ uint8_t cc2420_get_fifop(void) {
 	return GPIO_0_PORT->ODR & CC2420_FIFOP_PIN;
 }
 
+
+/**
+ * CS is active low
+ */
 void cc2420_spi_select(void) {
 //	printf("cc2420_spi_select\r\n");
 	CC2420_CS_LOW
@@ -89,25 +117,32 @@ void cc2420_spi_unselect(void) {
 	CC2420_CS_HIGH
 }
 
+/**
+ * cc2420 is active low
+ */
 void cc2420_reset(void) {
 	printf("cc2420_reset\r\n");
 	CC2420_RESET_PORT->BSRRH |= CC2420_RESET_PIN;	// low
 	hwtimer_wait(500);
 	CC2420_RESET_PORT->BSRRL |= CC2420_RESET_PIN;	// high
+//	hwtimer_wait(500);
+//	CC2420_RESET_PORT->BSRRH |= CC2420_RESET_PIN;	// low
 }
 
+char buf = '\0';
 uint8_t cc2420_txrx(uint8_t c) {
-	char buf = '\0';
 
 	//	printf("cc2420_txrx\r\n");
-	while (!buf) {
+//	while (!buf) {
 		spi_transfer_byte(SPI_0, c, &buf);
 		LED_RED_TOGGLE;
 
 //		 wait until bus is not busy anymore
 		while (spi_port->SR & SPI_SR_BSY)
 			;
-	}
+
+//		 hwtimer_wait(500);
+//	}
 
 	LED_GREEN_ON;
 
