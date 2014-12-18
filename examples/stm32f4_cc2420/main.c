@@ -33,8 +33,10 @@
 #include "periph/gpio.h"
 #include "cc2420.h"
 #include "transceiver.h"
+#include "stdio.h"
 
 #define TRANSCEIVER TRANSCEIVER_DEFAULT
+#define PA3 3
 
 static void testCommand(int argc, char **argv) {
 	(void) argc; /* the function takes no arguments */
@@ -78,11 +80,56 @@ static void startCC2420_thread(void) {
 //    }
 }
 
+/**
+ * Wenn der PIN high ist, wird 1 zurueckgegeben,
+ * ansonsten 0
+ */
+uint32_t get_gpio(GPIO_TypeDef *port, uint8_t pin){
+//	return ((port->ODR & (1 << pin)) >> pin);
+    if (port->MODER & (3 << (pin * 2))) {       /* if configured as output */
+        return ((port->ODR & (1 << pin)) >> pin);          /* read output data register */
+    } else {
+        return (port->IDR & (1 << pin)) >> pin;          /* else read input data register */
+    }
+
+}
+
+/**
+ * Setzt den entsprechenden PIN auf high
+ */
+void set_gpio(GPIO_TypeDef *port, uint8_t pin){
+		port->ODR |= (1 << pin);	// high
+}
+
+
+/**
+ * Setzt den entsprechenden PIN auf low
+ */
+void reset_gpio(GPIO_TypeDef *port, uint8_t pin){
+		port->ODR &= ~(1 << pin);	// low
+}
+
+void init_gpio_output(GPIO_TypeDef *port, uint8_t pin){
+	port->MODER &= ~(2 << (2 * pin));           /* set pin to output mode */
+	port->MODER |= (1 << (2 * pin));
+	port->OTYPER &= ~(1 << pin);                /* set to push-pull configuration */
+	port->OSPEEDR |= (3 << (2 * pin));          /* set to high speed */
+	port->PUPDR &= ~(3 << (2 * pin));           /* configure push-pull resistors */
+	port->PUPDR |= (GPIO_PULLUP << (2 * pin));
+	port->ODR &= ~(1 << pin);                   /* set pin to low signal */
+}
+
+void init_gpio_input(GPIO_TypeDef *port, uint8_t pin){
+    port->MODER &= ~(3 << (2 * pin));           /* configure pin as input */
+    port->PUPDR &= ~(3 << (2 * pin));           /* configure push-pull resistors */
+    port->PUPDR |= (GPIO_PULLDOWN << (2 * pin));
+}
+
 int main(void) {
 	board_init();	// wird fuer den STM32F4 im reset_handler() schon ausgefuehrt
-	puts("Hello World!");
+	puts("Hello World!\r\n");
 
-	uart_init();
+//	uart_init();
 
 //	GPIOD->BSRRL = (uint16_t)0x8000;	// blue LED
 //	GPIOD->BSRRL = ((uint16_t)0x2000);	// orange LED
@@ -90,21 +137,63 @@ int main(void) {
 //	LD3_ON;	// orange
 //	LD6_ON;	// blue
 
-	puts("starting shell...");
-	puts("  posix open");
+	puts("starting shell...\r\n");
+	puts("  posix open\r\n");
 	(void) posix_open(uart0_handler_pid, 0);
 
-	(void) puts("Welcome to RIOT!");
+	(void) puts("Welcome to RIOT!\r\n");
 
 	// start a thread
 //	startCC2420_thread();
 
-	puts("  shell init");
+	puts("  shell init\r\n");
 	shell_init(&shell, sc, UART0_BUFSIZE, uart0_readc, uart0_putc);
-	puts("  shell run");
+	puts("  shell run\r\n");
+	puts("BLa");
 
-	gpio_init_out(GPIO_0, GPIO_PULLUP);
-	gpio_write(GPIO_0, 1);
+//	gpio_init_out(GPIO_0, GPIO_PULLUP);
+//
+//	gpio_write(GPIO_0, 1);
+
+	/*
+	 *  PA3 testen
+	 */
+	GPIO_0_CLKEN();	// Takt am Port einschalten
+	uint32_t signal = 0x00;
+	timex_t delay = timex_set(1, 0);
+
+	// PA3 auf high
+	int pin = 3;
+//	init_gpio_output(GPIOA, PA3);
+//
+//	printf("set PA3\r\n");
+//	set_gpio(GPIOA, PA3);
+//	printf("PA3 %ld\r\n", get_gpio(GPIOA, PA3));
+//
+//	vtimer_sleep(delay);
+//
+//	printf("reset PA3\r\n");
+//	reset_gpio(GPIOA, PA3);
+////	GPIOA->BSRRH |= (1 << PA3);
+
+//	printf("PA3 %ld\r\n", GPIOA->ODR & (1 << pin));
+
+	vtimer_sleep(delay);
+
+	printf("input PA3\r\n");
+	init_gpio_input(GPIOA, 3);
+	printf("PA3 %ld\r\n", get_gpio(GPIOA, 3));
+//	while(1){
+//		printf("PA3 %ld\r\n", get_gpio(GPIOA, PA3));
+//		/* Flush stdout */
+//		printf("\f");
+//		vtimer_sleep(delay);
+//	}
+//
+//	// TODO Schleife entfernen
+//	while(1){
+//
+//	}
 
 //	shell_run(&shell);
 //	startCC2420_thread();
@@ -113,7 +202,8 @@ int main(void) {
 	/**
 	 * intialize SPI bus for cc2420 communication
 	 */
-	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+//	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 
 	/*
 	 * initialize tranceiver
@@ -134,10 +224,10 @@ int main(void) {
 	}
 	LED_RED_OFF;
 
-	uint16_t addr = 0x0001, new_addr;
+	uint16_t addr = 0x0002, new_addr;
 
 
-	cc2420_set_address(addr);
+	new_addr = cc2420_set_address(addr);
 	cc2420_set_channel(18);
 //	cc2420_set_pan(0x1111);
 	cc2420_set_pan(0xffff);
@@ -148,14 +238,14 @@ int main(void) {
 		printf("cc2420 address set to: %d\r\n", addr);
 	}
 
-	unsigned int channel = cc2420_get_channel();
+	int channel = cc2420_get_channel();
 	uint16_t address = cc2420_get_address();
 	uint16_t pan_id = cc2420_get_pan();
 	int tx_pwr = cc2420_get_tx_power();
 
 	printf("cc2420 channel is: %d\r\n", channel);
-	printf("cc2420 address is: %d\r\n", address);
-	printf("cc2420 pan is: %d\r\n", pan_id);
+	printf("cc2420 address is: %u\r\n", address);
+	printf("cc2420 pan is: %u\r\n", pan_id);
 	printf("cc2420 tx power: %d\r\n", tx_pwr);
 
 
