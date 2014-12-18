@@ -67,10 +67,8 @@ void cc2420_spi_init(void) {
 	spi_t dev = SPI_0;
 
 	/* configure necessary pin */
-	// TODO configure RCC and direction for all SPI pins
 	// cc2420 radio modul supports up to 10MHz spi clock
 	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
-//	spi_init_master(dev, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 
 
 	switch (dev) {
@@ -94,8 +92,10 @@ uint8_t cc2420_get_cca(void) {
 }
 
 uint8_t cc2420_get_sfd(void) {
-	printf("cc2420_get_sfd\r\n");
-	return GPIO_0_PORT->ODR & CC2420_SFD_PIN;
+//	printf("cc2420_get_sfd\r\n");
+//	return GPIO_0_PORT->ODR & CC2420_SFD_PIN;
+//	return GPIO_0_PORT->BSRRL & CC2420_SFD_PIN;
+	return !(GPIO_0_PORT->IDR & CC2420_SFD_PIN);
 }
 
 uint8_t cc2420_get_fifop(void) {
@@ -135,7 +135,7 @@ uint8_t cc2420_txrx(uint8_t c) {
 	//	printf("cc2420_txrx\r\n");
 //	while (!buf) {
 		spi_transfer_byte(SPI_0, c, &buf);
-		LED_RED_TOGGLE;
+//		LED_RED_TOGGLE;
 
 //		 wait until bus is not busy anymore
 		while (spi_port->SR & SPI_SR_BSY)
@@ -144,9 +144,9 @@ uint8_t cc2420_txrx(uint8_t c) {
 //		 hwtimer_wait(500);
 //	}
 
-	LED_GREEN_ON;
+//	LED_GREEN_ON;
 
-		printf("buf: %d\r\n", buf);
+//		printf("buf: %d\r\n", buf);
 		return buf;
 
 }
