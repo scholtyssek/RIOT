@@ -20,10 +20,10 @@ USEMODULE += posix
 USEMODULE += uart0
 USEMODULE += cc2420
 USEMODULE += shell
+USEMODULE += transceiver
 # the uart implementation uses ringbuffer and therefore needs lib
 #USEMODULE += lib
 #USEMODULE += timex
 #USEMODULE += uart1
-#USEMODULE += transceiver
 
 include $(RIOTBASE)/Makefile.include
