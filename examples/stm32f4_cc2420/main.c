@@ -149,7 +149,6 @@ int main(void) {
 	puts("  shell init\r\n");
 	shell_init(&shell, sc, UART0_BUFSIZE, uart0_readc, uart0_putc);
 	puts("  shell run\r\n");
-	puts("BLa");
 
 //	gpio_init_out(GPIO_0, GPIO_PULLUP);
 //
@@ -202,14 +201,15 @@ int main(void) {
 	/**
 	 * intialize SPI bus for cc2420 communication
 	 */
-//	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
-	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
+	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+//	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 
 	/*
 	 * initialize tranceiver
 	 */
 	transceiver_init(TRANSCEIVER_CC2420);
 	kernel_pid_t transceiver_pid = transceiver_start();
+
 //	int transceiver_pid = transceiver_start(); 	// start transceiver thread
 //	DEBUG("Transceiver started on thread %d", transceiver_pid);
 //
@@ -217,31 +217,48 @@ int main(void) {
 
 //	cc2420_init(KERNEL_PID_LAST + 1);
 	printf("cc2420 transceiver_init with pid %d\r\n", transceiver_pid);
-	cc2420_init(transceiver_pid);
+//	cc2420_init(transceiver_pid);
+
+
+	/**
+	 * CC2420 initialization completed
+	 */
+	cc2420_radio_driver.init();
+	cc2420_radio_driver.on();
 
 	while (!cc2420_is_on()) {
 		LED_RED_ON;
 	}
 	LED_RED_OFF;
+	LED_GREEN_ON;
 
 	uint16_t addr = 0x0002, new_addr;
 
+	cc2420_radio_driver.set_address(addr);
+	cc2420_radio_driver.set_channel(18);
+	cc2420_radio_driver.set_pan_id(0xffff);
+	cc2420_radio_driver.set_tx_power(-10);
 
-	new_addr = cc2420_set_address(addr);
-	cc2420_set_channel(18);
+
+//	new_addr = cc2420_set_address(addr);
+//	cc2420_set_channel(18);
 //	cc2420_set_pan(0x1111);
-	cc2420_set_pan(0xffff);
-	cc2420_set_tx_power(-10);	// -10db?
+//	cc2420_set_pan(0xffff);
+//	cc2420_set_tx_power(-10);	// -10db?
 	if(addr != new_addr){
-		printf("cc2420 address could not be set to: %d\r\n", addr);
+		printf("cc2420 address could not be set to: %d\r\n", cc2420_radio_driver.get_address);
 	}else{
-		printf("cc2420 address set to: %d\r\n", addr);
+		printf("cc2420 address set to: %d\r\n",  cc2420_radio_driver.get_address);
 	}
 
-	int channel = cc2420_get_channel();
-	uint16_t address = cc2420_get_address();
-	uint16_t pan_id = cc2420_get_pan();
-	int tx_pwr = cc2420_get_tx_power();
+//	int channel = cc2420_get_channel();
+//	uint16_t address = cc2420_get_address();
+//	uint16_t pan_id = cc2420_get_pan();
+//	int tx_pwr = cc2420_get_tx_power();
+	int channel = cc2420_radio_driver.get_channel;
+	uint16_t address = cc2420_radio_driver.get_address();
+	uint16_t pan_id = cc2420_radio_driver.get_pan_id();
+	int tx_pwr = cc2420_radio_driver.get_tx_power();
 
 	printf("cc2420 channel is: %d\r\n", channel);
 	printf("cc2420 address is: %u\r\n", address);
@@ -252,16 +269,22 @@ int main(void) {
     /* Flush stdout */
 	printf("\f");
 
-	/**
-	 * CC2420 initialization completed
-	 */
+
 
 	// create cc2420 packet and send it
 	cc2420_packet_t cc2420_packet;
-	uint8_t buf;
-	ieee802154_frame_init(&cc2420_packet.frame, &buf);
-	cc2420_send(&cc2420_packet);
 
+//	cc2420_packet_t *cc2420_rx_buffer = (cc2420_packet_t*) malloc(sizeof(cc2420_packet_t));
+	uint8_t buf;
+//	ieee802154_node_addr_t *dest = (ieee802154_node_addr_t*) malloc(sizeof(ieee802154_node_addr_t));
+//	dest->long_addr = 0x1;
+//	dest->pan.addr = 0x1;
+//	dest->pan.id = 0x1;
+
+//	ieee802154_frame_init(&cc2420_packet.frame, &buf);
+	cc2420_send(&cc2420_packet);
+//	cc2420_radio_driver.send(PACKET_KIND_DATA, dest, true, true, &buf, sizeof(buf));
+	//(&cc2420_packet, dest, true, true &buf)
 
 
 //	/* set channel to CCNL_CHAN */
