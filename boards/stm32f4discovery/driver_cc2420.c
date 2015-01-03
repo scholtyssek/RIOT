@@ -95,7 +95,7 @@ uint8_t cc2420_get_sfd(void) {
 //	printf("cc2420_get_sfd\r\n");
 //	return GPIO_0_PORT->ODR & CC2420_SFD_PIN;
 //	return GPIO_0_PORT->BSRRL & CC2420_SFD_PIN;
-	return !(GPIO_0_PORT->IDR & CC2420_SFD_PIN);
+	return (GPIO_0_PORT->IDR & CC2420_SFD_PIN);
 }
 
 uint8_t cc2420_get_fifop(void) {
