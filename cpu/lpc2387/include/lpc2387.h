@@ -1,7 +1,9 @@
 /*
- * lpc2387.h
- *
  * Copyright (C) 2009 Kaspar Schleiser <kaspar@schleiser.de>
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
  *
  * Parts taken from FeuerWhere-Project, lpc2387.h.
  */
@@ -11,6 +13,10 @@
 
 #include "lpc23xx.h"
 #include "bitarithm.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define F_CCO                   288000000
 #define CL_CPU_DIV              4                                   ///< CPU clock divider
@@ -205,5 +211,9 @@
 #define TXCTCR         0x70
 /** @} */
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __LPC2387_H

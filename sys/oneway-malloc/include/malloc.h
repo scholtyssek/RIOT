@@ -7,17 +7,21 @@
  */
 
 /**
- * @defgroup    oneway_malloc
+ * @defgroup    oneway_malloc Oneway malloc
  * @ingroup     sys
- * @{
- * @file        malloc.h
- * @brief       A malloc implementation for MSP-430 boards without free.
  *
- * @details     The toolchain of MSP-430 does not contain malloc() and friends.
- *              These functions provide the same interface as the stdlib functions,
- *              but the option to free memory.
+ * @brief       A malloc implementation without free for boards where the
+ *              toolchain does not implement dynamic memory allocation.
+ *
+ *              The toolchain of MSP-430, for example, does not contain
+ *              malloc() and friends.  These functions provide the same
+ *              interface as the stdlib functions, but the option to free
+ *              memory.
  *
  * @note        You should prefer statically allocated memory whenever possible.
+ *
+ * @{
+ * @file
  *
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
  * @author      René Kijewski <rene.kijewski@fu-berlin.de>
@@ -27,6 +31,10 @@
 #define __MALLOC_H
 
 #include <stdlib.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief       Allocation a block of memory.
@@ -55,7 +63,7 @@ void *realloc(void *ptr, size_t size);
  * @param[in]   cnt    The other factor of the number of bytes to allocated.
  * @returns     The new memory block. `NULL` if the "heap" is exhausted.
  */
-void *calloc(int size, size_t cnt);
+void *calloc(size_t size, size_t cnt);
 
 /**
  * @brief       This is a no-op.
@@ -64,6 +72,10 @@ void *calloc(int size, size_t cnt);
  * @param[in]   ptr   The ignored argument.
  */
 void free(void *ptr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __MALLOC_H */
 

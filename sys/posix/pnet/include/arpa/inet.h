@@ -29,6 +29,10 @@
 #include "inet_ntop.h"
 #include "inet_pton.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint16_t in_port_t;     ///< Internet port type
 typedef uint32_t in_addr_t;     ///< IPv4 address type
 
@@ -62,7 +66,7 @@ struct in_addr {
  *          The Open Group Base Specification Issue 7, htons
  *      </a>
  *
- * @param[in] hostlong  A 16 bit number.
+ * @param[in] hostshort A 16 bit number.
  * @return              The argument value converted from host to network byte
  *                      order.
  */
@@ -75,7 +79,7 @@ struct in_addr {
  *          The Open Group Base Specification Issue 7, ntohl
  *      </a>
  *
- * @param[in] hostlong  A 32-bit integer number.
+ * @param[in] netlong   A 32-bit integer number.
  * @return              The argument value converted from network to host byte
  *                      order.
  */
@@ -88,11 +92,15 @@ struct in_addr {
  *          The Open Group Base Specification Issue 7, ntohs
  *      </a>
  *
- * @param[in] hostlong  A 16-bit integer number.
+ * @param[in] netshort  A 16-bit integer number.
  * @return              The argument value converted from network to host byte
  *                      order.
  */
 #define ntohs(netshort)     NTOHS(netshort)
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}

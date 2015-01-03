@@ -28,6 +28,10 @@
 
 #include "socket_base/in.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint8_t sa_family_t;    ///< POSIX compatible type for address family.
 typedef uint32_t  socklen_t;    ///< POSIX compatible type for address length.
 
@@ -266,8 +270,8 @@ int32_t socket_base_send(int s, const void *buf, uint32_t len, int flags);
  * @param[in] len       Length of buffer.
  * @param[in] flags     Flags for possible later implementations (currently
  *                      unused).
- * @param[in] from      IPv6 Address to send data to.
- * @param[in] fromlen   Length of address in *from* in byte (always 16).
+ * @param[in] to        IPv6 Address to send data to.
+ * @param[in] tolen     Length of address in *to* in byte (always 16).
  *
  * @return Number of send bytes, -1 on error.
  */
@@ -326,6 +330,10 @@ int socket_base_accept(int s, sockaddr6_t *addr, socklen_t *addrlen);
  * PIDs of the send and receive thread.
  */
 void socket_base_print_sockets(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}

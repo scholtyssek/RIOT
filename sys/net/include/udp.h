@@ -7,7 +7,7 @@
  */
 
 /**
- * @defgroup tcp    UDP implementation
+ * @defgroup udp    UDP implementation
  * @ingroup net
  * @brief   This module implements the transport layer protocol UDP.
  *          This includes 6LoWPAN UDP header compression.
@@ -30,6 +30,10 @@
 #include "socket_base/socket.h"
 #include "socket_base/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Initializes udp.
  *
@@ -37,4 +41,9 @@
  */
 int udp_init_transport_layer(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* UDP_H */
+/** @} */

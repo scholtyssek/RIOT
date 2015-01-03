@@ -2,10 +2,9 @@
  * maca.h - The MACA driver for the Redbee EconoTag
  * Copyright (C) 2013 Thomas Eichinger <thomas.eichinger@fu-berlin.de>
  *
- * This source code is licensed under the GNU Lesser General Public License,
- * Version 2.  See the file LICENSE for more details.
- *
- * This file is part of RIOT.
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
  */
 
 #ifndef MACA_H_
@@ -15,6 +14,10 @@
 #include "radio/types.h"
 
 #include "maca_packet.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*********************************************************/
 /* function definitions                                  */
@@ -531,5 +534,8 @@ static volatile struct MACA_struct * const MACA = (void *) (MACA_BASE_ADDRESS + 
 #define MACA_TMRDIS_SFTOFF_ABORT 1
 
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // MACA_H_

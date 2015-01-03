@@ -1,9 +1,21 @@
 /*
- * Copyright (C) 2014  Oliver Hahm <oliver.hahm@inria.fr>
+ * Copyright (C) 2013 Stephan Arndt <arndtste@zedat.fu-berlin.de>
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
  * directory for more details.
+ */
+
+/**
+ * @ingroup     rpl
+ * @{
+ * @file        of_mrhof.h
+ * @brief       Objective Function MRHOF.
+ *
+ * Header-file, which defines all functions for the implementation of Objective Function MRHOF.
+ *
+ * @author      Eric Engel <eric.engel@fu-berlin.de>
+ * @}
  */
 
 #ifndef OF_MRHOF_H
@@ -11,6 +23,10 @@
 
 #include "rpl/rpl_structs.h"
 #include "rpl/rpl_config.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * Disallow links with greater than 4 expected
@@ -45,5 +61,9 @@
 #define ETX_RANK_MULTIPLIER (0x80)
 
 rpl_of_t *rpl_get_of_mrhof(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* OF_MRHOF_H */

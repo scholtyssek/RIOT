@@ -28,6 +28,10 @@
 
 #include "sixlowpan/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief   Maximum length of a IEEE 802.15.4 long address represented as string.
  */
@@ -40,7 +44,7 @@
  *                          *mcast* is 1).
  * @param[in]   dest        The destination address of the frame (will be
  *                          ignored if *mcast* is 1).
- * @param[in]   dest_len    The lengts of the destination address in byte.
+ * @param[in]   dest_len    The lengths of the destination address in byte.
  * @param[in]   payload     The payload of the frame.
  * @param[in]   length      The length of the payload.
  * @param[in]   mcast       send frame as multicast frame (*addr* and *if_id*
@@ -57,6 +61,10 @@ int sixlowpan_mac_send_ieee802154_frame(int if_id, const void *dest,
  * @return  PID of the MAC receiver thread.
  */
 kernel_pid_t sixlowpan_mac_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 #endif /* SIXLOWPAN_MAC_H */

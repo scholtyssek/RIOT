@@ -43,8 +43,8 @@ uint16_t udp_csum(ipv6_hdr_t *ipv6_header, udp_hdr_t *udp_header)
     uint16_t len = NTOHS(udp_header->length);
 
     sum = len + IPPROTO_UDP;
-    sum = csum(sum, (uint8_t *)&ipv6_header->srcaddr, 2 * sizeof(ipv6_addr_t));
-    sum = csum(sum, (uint8_t *)udp_header, len);
+    sum = net_help_csum(sum, (uint8_t *)&ipv6_header->srcaddr, 2 * sizeof(ipv6_addr_t));
+    sum = net_help_csum(sum, (uint8_t *)udp_header, len);
     return (sum == 0) ? 0xffff : HTONS(sum);
 }
 
@@ -86,6 +86,7 @@ void *udp_packet_handler(void *arg)
 
             if (udp_socket != NULL) {
                 m_send_udp.content.ptr = (char *)ipv6_header;
+
                 msg_send_receive(&m_send_udp, &m_recv_udp, udp_socket->recv_pid);
             }
             else {
@@ -201,7 +202,7 @@ int32_t udp_sendto(int s, const void *buf, uint32_t len, int flags,
 
         return ipv6_sendto(&to->sin6_addr, IPPROTO_UDP,
                            (uint8_t *)(current_udp_packet),
-                           NTOHS(current_udp_packet->length));
+                           NTOHS(current_udp_packet->length), NULL);
     }
     else {
         return -1;

@@ -30,6 +30,10 @@
 
 #include "sixlowpan/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief ICMPv6 packet type for parameter problem message.
  * @see <a href="http://tools.ietf.org/html/rfc4443#section-3.4">
@@ -214,15 +218,15 @@ void icmpv6_send_router_adv(ipv6_addr_t *addr, uint8_t sllao,
  *                      *aro* == OPT_ARO add it, else not.
  */
 void icmpv6_send_neighbor_sol(ipv6_addr_t *src, ipv6_addr_t *dest,
-                              ipv6_addr_t *targ, uint8_t slloa,
+                              ipv6_addr_t *targ, uint8_t sllao,
                               uint8_t aro);
 
 /**
  * @brief Send ICMPv6 neighbor advertisement.
  *
  * @param[in] src       Source address for IPv6 header.
- * @param[in] dest      Destination address for IPv6 header.
- * @param[in] targ      Value for target address field of neighbor
+ * @param[in] dst       Destination address for IPv6 header.
+ * @param[in] tgt       Value for target address field of neighbor
  *                      advertisement.
  * @param[in] rso       Value for flags field of neighbor advertisement.
  * @param[in] sllao     Flag to include source link-layer address
@@ -246,5 +250,10 @@ void icmpv6_send_neighbor_adv(ipv6_addr_t *src, ipv6_addr_t *dst,
  * @return The internet checksum of the given ICMPv6 packet.
  */
 uint16_t icmpv6_csum(ipv6_hdr_t *ipv6_buf, icmpv6_hdr_t *icmpv6_buf);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* SIXLOWPAN_ICMP_H */
 /** @} */

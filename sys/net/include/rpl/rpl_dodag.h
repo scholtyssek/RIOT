@@ -1,6 +1,4 @@
-/**
- * RPL dodag prototypes
- *
+/*
  * Copyright (C) 2013, 2014  INRIA.
  *
  * This file is subject to the terms and conditions of the GNU Lesser
@@ -9,9 +7,13 @@
  *
  * @ingroup rpl
  * @{
- * @file    rpl_dodag.h
- * @brief   RPL dodag header
- * @author  Eric Engel <eric.engel@fu-berlin.de>
+ *
+ * @file        rpl_dodag.h
+ * @brief       RPL DODAG header
+ *
+ * Header file, which defines all public known DODAG-related functions for RPL.
+ *
+ * @author      Eric Engel <eric.engel@fu-berlin.de>
  * @}
  */
 
@@ -19,6 +21,10 @@
 #include "ipv6.h"
 #include "rpl_structs.h"
 #include "rpl_config.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void rpl_instances_init(void);
 rpl_instance_t *rpl_new_instance(uint8_t instanceid);
@@ -42,3 +48,7 @@ void rpl_parent_update(rpl_parent_t *parent);
 void rpl_global_repair(rpl_dodag_t *dodag, ipv6_addr_t *p_addr, uint16_t rank);
 void rpl_local_repair(void);
 uint16_t rpl_calc_rank(uint16_t abs_rank, uint16_t minhoprankincrease);
+
+#ifdef __cplusplus
+}
+#endif

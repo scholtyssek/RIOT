@@ -27,6 +27,10 @@
 #include "mutex.h"
 #include "transceiver.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief   type to specify types of upper layer addresses
  */
@@ -348,8 +352,8 @@ int net_if_send_packet_long(int if_id, net_if_eui64_t *target,
  *                                  the destination broadcast address. Choose
  *                                  NET_IF_TRANS_ADDR_M_SHORT if you are not
  *                                  sure
- * @param[in] packet_data           The packet to send
- * @param[in] packet_len            The length of the packet's data in byte,
+ * @param[in] payload               The packet to send
+ * @param[in] payload_len           The length of the packet's data in byte,
  *                                  negative number on error.
  *
  * @return The number of bytes send on success, negative value on failure
@@ -398,7 +402,7 @@ int net_if_get_eui64(net_if_eui64_t *eui64, int if_id, int force_generation);
 
 /**
  * @brief   Parses a string to an EUI-64.
- * @detail  The parsing will be back to front, every non-hexadecimal character
+ * @details The parsing will be back to front, every non-hexadecimal character
  *          and every hexadecimal character beyond the count of 8 will be
  *          ignored
  *
@@ -496,6 +500,10 @@ int32_t net_if_get_pan_id(int if_id);
  * @return  the PAN ID on success, -1 on failure.
  */
 int32_t net_if_set_pan_id(int if_id, uint16_t pan_id);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}

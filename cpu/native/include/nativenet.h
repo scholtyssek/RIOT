@@ -1,4 +1,4 @@
-/**
+/*
  * nativenet transceiver interface
  *
  * A configurable transceiver for the native port.
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup    native_net
+ * @defgroup    native_net Native network interface
  * @ingroup     native_cpu
  * @{
  * @author  Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
@@ -27,6 +27,7 @@
 
 #include <net/ethernet.h>
 
+#include "radio/types.h"
 #include "kernel_types.h"
 #include "netdev/base.h"
 
@@ -41,6 +42,11 @@
 
 #ifndef NATIVE_MAX_DATA_LENGTH
 #include "tap.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef MODULE_SIXLOWPAN
 #define NATIVE_MAX_DATA_LENGTH (127)
 #else
@@ -56,7 +62,7 @@
 extern const netdev_driver_t nativenet_driver;
 
 /**
- * @brief   Default @netdev API device
+ * @brief   Default @ref netdev API device
  */
 extern netdev_t nativenet_default_dev;
 
@@ -138,7 +144,7 @@ int16_t nativenet_get_channel(void);
 /**
  * Set transceiver pan
  *
- * @param channel the pan
+ * @param pan the pan
  * @return the pan
  */
 uint16_t nativenet_set_pan(uint16_t pan);
@@ -154,5 +160,10 @@ uint16_t nativenet_get_pan(void);
  * Enable transceiver rx mode
  */
 void nativenet_switch_to_rx(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 /** @} */
 #endif /* NATIVENET_H */

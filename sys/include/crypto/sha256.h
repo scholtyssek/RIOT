@@ -51,11 +51,21 @@
 
 #include <inttypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SHA256_DIGEST_LENGTH 32
 
+/**
+ * @brief Context for ciper operatins based on sha256
+ */
 typedef struct {
+    /** global state */
     uint32_t state[8];
+    /** processed bytes counter */
     uint32_t count[2];
+    /** data buffer */
     unsigned char buf[64];
 } sha256_context_t;
 
@@ -95,6 +105,10 @@ void sha256_final(unsigned char digest[32], sha256_context_t *ctx);
  *           if md == NULL, one static buffer is used
  */
 unsigned char *sha256(const unsigned char *d, size_t n, unsigned char *md);
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 #endif /* _SHA256_H_ */

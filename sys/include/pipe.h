@@ -17,14 +17,17 @@
  */
 
 /**
- * @addtogroup  sys
- * @{
- * @file
+ * @defgroup    sys_pipe Pipe IPC
+ * @ingroup     sys
  *
  * @brief       Generic pipe implementation.
  * @details     This pipe implementation is a tight wrapper around a ringbuffer.
  *              It sends the calling thread to sleep if the ringbuffer is full
  *              or empty, respectively. It can be used in ISRs, too.
+ *
+ *
+ * @{
+ * @file
  *
  * @author      René Kijewski <rene.kijewski@fu-berlin.de>
  */
@@ -37,6 +40,10 @@
 #include "mutex.h"
 #include "ringbuffer.h"
 #include "thread.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef PIPE_BUF
 #   define PIPE_BUF (128) /**< Size of a dynamically malloc'd pipe. */
@@ -107,6 +114,10 @@ pipe_t *pipe_malloc(unsigned size);
  * @param     rp   Pipe to free.
  */
 void pipe_free(pipe_t *rp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 /**

@@ -1,4 +1,4 @@
-/**
+/*
  * IPv6 constants, data structs, and prototypes
  *
  * Copyright (C) 2013  INRIA.
@@ -33,6 +33,10 @@
 #include "sixlowpan/ip.h"
 #include "sixlowpan/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* IPv6 field values */
 #define IPV6_VER                    (0x60)
 /* size of global buffer */
@@ -47,6 +51,10 @@
 extern uint8_t ipv6_ext_hdr_len;
 extern kernel_pid_t ip_process_pid;
 
+#ifdef MODULE_RPL
+extern int srh_handler_pid;
+#endif
+
 /* base header lengths */
 #define LL_HDR_LEN                  (0x4)
 #define ICMPV6_HDR_LEN              (0x4)
@@ -60,7 +68,8 @@ extern char ip_process_buf[IP_PROCESS_STACKSIZE];
 
 extern kernel_pid_t sixlowip_reg[SIXLOWIP_MAX_REGISTERED];
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     struct net_if_addr_t *addr_next;
     struct net_if_addr_t *addr_prev;
     net_if_l3p_t addr_protocol;
@@ -70,19 +79,24 @@ typedef struct __attribute__((packed)) {
     timex_t valid_lifetime;
     timex_t preferred_lifetime;
     uint8_t is_anycast;
-} ipv6_net_if_addr_t;
+}
+ipv6_net_if_addr_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     ipv6_net_if_addr_t *addr;
     int if_id;
-} ipv6_net_if_hit_t;
+}
+ipv6_net_if_hit_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t prefix;             ///< prefix length of the sub-net
     uint8_t adv_cur_hop_limit;
     uint32_t adv_reachable_time;
     uint32_t adv_retrans_timer;
-} ipv6_net_if_ext_t;
+}
+ipv6_net_if_ext_t;
 
 /* function prototypes */
 ipv6_net_if_ext_t *ipv6_net_if_get_ext(int if_id);
@@ -98,5 +112,9 @@ ipv6_net_if_hit_t *ipv6_net_if_addr_prefix_eq(ipv6_net_if_hit_t *hit, ipv6_addr_
 ipv6_net_if_hit_t *ipv6_net_if_addr_match(ipv6_net_if_hit_t *hit, const ipv6_addr_t *addr);
 uint32_t get_remaining_time(timex_t *t);
 void set_remaining_time(timex_t *t, uint32_t time);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _SIXLOWPAN_IP_H*/

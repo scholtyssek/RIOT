@@ -27,9 +27,6 @@
 #include "msg.h"
 
 #define ENABLE_DEBUG (0)
-#if ENABLE_DEBUG
-#define DEBUG_ENABLED
-#endif
 #include "debug.h"
 
 at86rf231_packet_t at86rf231_rx_buffer[AT86RF231_RX_BUF_SIZE];
@@ -61,11 +58,11 @@ void at86rf231_rx_handler(void)
     at86rf231_rx_buffer[rx_buffer_next].crc = (fcs_rssi >> 7) & 0x01;
 
     if (at86rf231_rx_buffer[rx_buffer_next].crc == 0) {
-        DEBUG("Got packet with invalid crc.\n");
+        DEBUG("at86rf231: Got packet with invalid crc.\n");
         return;
     }
 
-#ifdef DEBUG_ENABLED
+#if ENABLE_DEBUG
     DEBUG("pkg: ");
     for (int i = 1; i < at86rf231_rx_buffer[rx_buffer_next].length; i++) {
         DEBUG("%x ", buf[i]);
@@ -79,7 +76,7 @@ void at86rf231_rx_handler(void)
 
     /* if packet is no ACK */
     if (at86rf231_rx_buffer[rx_buffer_next].frame.fcf.frame_type != IEEE_802154_ACK_FRAME) {
-#ifdef DEBUG_ENABLED
+#if ENABLE_DEBUG
         ieee802154_frame_print_fcf_frame(&at86rf231_rx_buffer[rx_buffer_next].frame);
 #endif
         if (at86rf231_raw_packet_cb != NULL) {
@@ -99,7 +96,7 @@ void at86rf231_rx_handler(void)
     }
     else {
         /* This should not happen, ACKs are consumed by hardware */
-#ifdef DEBUG_ENABLED
+#if ENABLE_DEBUG
         DEBUG("GOT ACK for SEQ %u\n", at86rf231_rx_buffer[rx_buffer_next].frame.seq_nr);
         ieee802154_frame_print_fcf_frame(&at86rf231_rx_buffer[rx_buffer_next].frame);
 #endif

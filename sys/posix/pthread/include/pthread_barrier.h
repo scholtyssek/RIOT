@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2014 Freie Universität Berlin
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
 /**
  * @ingroup pthread
  * @{
@@ -11,6 +19,10 @@
 
 #include "mutex.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @def     PTHREAD_PROCESS_SHARED
  * @brief   Share the structure with child processes (default).
@@ -19,7 +31,7 @@
  */
 #define PTHREAD_PROCESS_SHARED (0)
 /**
- * @def     PTHREAD_PROCESS_SHARED
+ * @def     PTHREAD_PROCESS_PRIVATE
  * @brief   Don't share the structure with child processes.
  * @note    RIOT is a single-process OS.
  *          Setting the value of `pshared` does not change anything.
@@ -119,6 +131,10 @@ int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr, int *pshar
  * @returns   0, the invocation cannot fail
  */
 int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

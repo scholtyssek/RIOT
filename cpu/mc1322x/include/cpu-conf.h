@@ -2,14 +2,17 @@
  * cpu.h - mc1322x specific definitions
  * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr>
  *
- * This source code is licensed under the GNU Lesser General Public License,
- * Version 2.  See the file LICENSE for more details.
- *
- * This file is part of RIOT
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
  */
 
 #ifndef CPUCONF_H_
 #define CPUCONF_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @ingroup     conf
@@ -62,6 +65,10 @@
 
 #ifndef UART0_BUFSIZE
 #define UART0_BUFSIZE                   (64)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 /** @} */

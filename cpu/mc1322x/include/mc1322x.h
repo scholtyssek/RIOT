@@ -1,17 +1,20 @@
 /*
  * mc1322x.h - mc1322x specific definitions
- * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr>
+ * Copyright (C) 2013, 2014 Oliver Hahm <oliver.hahm@inria.fr>
  *
- * This source code is licensed under the GNU Lesser General Public License,
- * Version 2.  See the file LICENSE for more details.
- *
- * This file is part of RIOT.
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
  */
 
 #ifndef MC1322X_H
 #define MC1322X_H
 
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*-----------------------------------------------------------------*/
 /* System Management */
@@ -304,8 +307,6 @@ static volatile struct TMR_struct * const TMR3 = (void *) (TMR3_BASE);
 /* Interrupts */
 #define INTBASE        (0x80020000)
 
-#include <stdint.h>
-
 /* Structure-based ITC access */
 #define __INTERRUPT_union(x)              \
                 union {                   \
@@ -442,5 +443,9 @@ extern void ssi_isr(void) __attribute__((weak));
 extern void adc_isr(void) __attribute__((weak));
 
 extern void spi_isr(void) __attribute__((weak));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* MC1322X_H */

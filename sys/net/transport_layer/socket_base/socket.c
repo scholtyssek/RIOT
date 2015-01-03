@@ -179,9 +179,12 @@ void socket_base_print_internal_socket(socket_internal_t *current_socket_interna
     printf("\n--------------------------\n");
 }
 
-int socket_base_exists_socket(int socket)
+bool socket_base_exists_socket(int socket)
 {
-    if (socket_base_sockets[socket - 1].socket_id == 0) {
+    if (socket < 1) {
+        return false;
+    }
+    if ((socket > MAX_SOCKETS) || (socket_base_sockets[socket - 1].socket_id == 0)) {
         return false;
     }
     else {
@@ -251,20 +254,19 @@ int socket_base_socket(int domain, int type, int protocol)
         i++;
     }
 
-    if (i > MAX_SOCKETS + 1) {
+    if (i > MAX_SOCKETS) {
         return -1;
     }
-    else {
-        socket_t *current_socket = &socket_base_sockets[i - 1].socket_values;
-        socket_base_sockets[i - 1].socket_id = i;
-        current_socket->domain = domain;
-        current_socket->type = type;
-        current_socket->protocol = protocol;
+
+    socket_t *current_socket = &socket_base_sockets[i - 1].socket_values;
+    socket_base_sockets[i - 1].socket_id = i;
+    current_socket->domain = domain;
+    current_socket->type = type;
+    current_socket->protocol = protocol;
 #ifdef MODULE_TCP
-        current_socket->tcp_control.state = 0;
+    current_socket->tcp_control.state = 0;
 #endif
-        return socket_base_sockets[i - 1].socket_id;
-    }
+    return socket_base_sockets[i - 1].socket_id;
 }
 
 int socket_base_connect(int socket, sockaddr6_t *addr, uint32_t addrlen)

@@ -53,6 +53,11 @@
 #include <limits.h>
 
 #include <machine/endian.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef char ___QUAD_ASSERT__LENGHTS[sizeof (long long) == 2*sizeof (int) ? +1 : -1];
 typedef char ___QUAD_ASSERT__2COMPLEMENT[-1234 == (~1234 + 1) ? +1 : -1];
 
@@ -77,15 +82,15 @@ typedef unsigned long long u_quad_t;
 #define QUAD_MAX (LLONG_MAX)
 #define UQUAD_MAX (ULLONG_MAX)
 
-/*
+/**
  * Depending on the desired operation, we view a `long long' (aka quad_t) in
  * one or more of the following formats.
  */
 union uu {
-    quad_t  q;      /* as a (signed) quad */
-    u_quad_t uq;    /* as an unsigned quad */
-    int sl[2];      /* as two signed ints */
-    u_int   ul[2];  /* as two unsigned ints */
+    quad_t  q;      /**< as a (signed) quad */
+    u_quad_t uq;    /**< as an unsigned quad */
+    int sl[2];      /**< as two signed ints */
+    u_int   ul[2];  /**< as two unsigned ints */
 };
 
 /*
@@ -138,3 +143,7 @@ int __ucmpdi2(u_quad_t, u_quad_t);
 u_quad_t __udivdi3(u_quad_t, u_quad_t );
 u_quad_t __umoddi3(u_quad_t, u_quad_t );
 quad_t __xordi3(quad_t, quad_t);
+
+#ifdef __cplusplus
+}
+#endif

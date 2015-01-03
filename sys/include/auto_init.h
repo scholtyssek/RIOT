@@ -32,7 +32,22 @@
 #ifndef AUTO_INIT_H
 #define AUTO_INIT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief Initializes all high level modules that do not require parameters for
+ *        initialization or uses default values.
+ *
+ *        This function gets called - if not explicitely disabled - by @ref
+ *        kernel_init right before jumping into @e main.
+ */
 void auto_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 #endif /* AUTO_INIT_H */
