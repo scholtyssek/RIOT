@@ -40,7 +40,7 @@
 
 
 // Dieses Flag gibt an, ob das Sender oder das Empfaengermodul verwendet wird
-#define USE_SENDER 0
+//#define USE_SENDER 0
 
 #define TRANSCEIVER TRANSCEIVER_DEFAULT
 #define PA3 3
@@ -235,8 +235,8 @@ int main(void) {
 	LED_GREEN_ON;
 
 #ifdef USE_SENDER
-//	config_sender();
-//	send_test_data();
+	config_sender();
+	send_test_data();
 #else
 	config_receiver();
 #endif
