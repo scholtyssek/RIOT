@@ -35,6 +35,8 @@
 #include "transceiver.h"
 #include "stdio.h"
 
+#include "receiver.h"
+
 #define TRANSCEIVER TRANSCEIVER_DEFAULT
 #define PA3 3
 
@@ -201,8 +203,8 @@ int main(void) {
 	/**
 	 * intialize SPI bus for cc2420 communication
 	 */
-	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
-//	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
+//	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_10MHZ);
+	spi_init_master(SPI_1, SPI_CONF_FIRST_RISING, SPI_SPEED_400KHZ);
 
 	/*
 	 * initialize tranceiver
@@ -219,57 +221,11 @@ int main(void) {
 	printf("cc2420 transceiver_init with pid %d\r\n", transceiver_pid);
 //	cc2420_init(transceiver_pid);
 
-
-	/**
-	 * CC2420 initialization completed
-	 */
-	cc2420_radio_driver.init();
-	cc2420_radio_driver.on();
-
-	while (!cc2420_is_on()) {
-		LED_RED_ON;
-	}
-	LED_RED_OFF;
-	LED_GREEN_ON;
-
-	uint16_t addr = 0x0002, new_addr;
-
-	cc2420_radio_driver.set_address(addr);
-	cc2420_radio_driver.set_channel(18);
-	cc2420_radio_driver.set_pan_id(0xffff);
-	cc2420_radio_driver.set_tx_power(-10);
-
-
-//	new_addr = cc2420_set_address(addr);
-//	cc2420_set_channel(18);
-//	cc2420_set_pan(0x1111);
-//	cc2420_set_pan(0xffff);
-//	cc2420_set_tx_power(-10);	// -10db?
-	if(addr != new_addr){
-		printf("cc2420 address could not be set to: %d\r\n", cc2420_radio_driver.get_address);
-	}else{
-		printf("cc2420 address set to: %d\r\n",  cc2420_radio_driver.get_address);
+	config_receiver();
+	while(1){
 	}
 
-//	int channel = cc2420_get_channel();
-//	uint16_t address = cc2420_get_address();
-//	uint16_t pan_id = cc2420_get_pan();
-//	int tx_pwr = cc2420_get_tx_power();
-	int channel = cc2420_radio_driver.get_channel;
-	uint16_t address = cc2420_radio_driver.get_address();
-	uint16_t pan_id = cc2420_radio_driver.get_pan_id();
-	int tx_pwr = cc2420_radio_driver.get_tx_power();
-
-	printf("cc2420 channel is: %d\r\n", channel);
-	printf("cc2420 address is: %u\r\n", address);
-	printf("cc2420 pan is: %u\r\n", pan_id);
-	printf("cc2420 tx power: %d\r\n", tx_pwr);
-
-
-    /* Flush stdout */
-	printf("\f");
-
-
+	//	cc2420_radio_driver.send
 
 	// create cc2420 packet and send it
 	cc2420_packet_t cc2420_packet;
