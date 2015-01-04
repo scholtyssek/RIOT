@@ -36,6 +36,11 @@
 #include "stdio.h"
 
 #include "receiver.h"
+#include "sender.h"
+
+
+// Dieses Flag gibt an, ob das Sender oder das Empfaengermodul verwendet wird
+#define USE_SENDER 0
 
 #define TRANSCEIVER TRANSCEIVER_DEFAULT
 #define PA3 3
@@ -86,49 +91,48 @@ static void startCC2420_thread(void) {
  * Wenn der PIN high ist, wird 1 zurueckgegeben,
  * ansonsten 0
  */
-uint32_t get_gpio(GPIO_TypeDef *port, uint8_t pin){
+uint32_t get_gpio(GPIO_TypeDef *port, uint8_t pin) {
 //	return ((port->ODR & (1 << pin)) >> pin);
-    if (port->MODER & (3 << (pin * 2))) {       /* if configured as output */
-        return ((port->ODR & (1 << pin)) >> pin);          /* read output data register */
-    } else {
-        return (port->IDR & (1 << pin)) >> pin;          /* else read input data register */
-    }
+	if (port->MODER & (3 << (pin * 2))) { /* if configured as output */
+		return ((port->ODR & (1 << pin)) >> pin); /* read output data register */
+	} else {
+		return (port->IDR & (1 << pin)) >> pin; /* else read input data register */
+	}
 
 }
 
 /**
  * Setzt den entsprechenden PIN auf high
  */
-void set_gpio(GPIO_TypeDef *port, uint8_t pin){
-		port->ODR |= (1 << pin);	// high
+void set_gpio(GPIO_TypeDef *port, uint8_t pin) {
+	port->ODR |= (1 << pin);	// high
 }
-
 
 /**
  * Setzt den entsprechenden PIN auf low
  */
-void reset_gpio(GPIO_TypeDef *port, uint8_t pin){
-		port->ODR &= ~(1 << pin);	// low
+void reset_gpio(GPIO_TypeDef *port, uint8_t pin) {
+	port->ODR &= ~(1 << pin);	// low
 }
 
-void init_gpio_output(GPIO_TypeDef *port, uint8_t pin){
-	port->MODER &= ~(2 << (2 * pin));           /* set pin to output mode */
+void init_gpio_output(GPIO_TypeDef *port, uint8_t pin) {
+	port->MODER &= ~(2 << (2 * pin)); /* set pin to output mode */
 	port->MODER |= (1 << (2 * pin));
-	port->OTYPER &= ~(1 << pin);                /* set to push-pull configuration */
-	port->OSPEEDR |= (3 << (2 * pin));          /* set to high speed */
-	port->PUPDR &= ~(3 << (2 * pin));           /* configure push-pull resistors */
+	port->OTYPER &= ~(1 << pin); /* set to push-pull configuration */
+	port->OSPEEDR |= (3 << (2 * pin)); /* set to high speed */
+	port->PUPDR &= ~(3 << (2 * pin)); /* configure push-pull resistors */
 	port->PUPDR |= (GPIO_PULLUP << (2 * pin));
-	port->ODR &= ~(1 << pin);                   /* set pin to low signal */
+	port->ODR &= ~(1 << pin); /* set pin to low signal */
 }
 
-void init_gpio_input(GPIO_TypeDef *port, uint8_t pin){
-    port->MODER &= ~(3 << (2 * pin));           /* configure pin as input */
-    port->PUPDR &= ~(3 << (2 * pin));           /* configure push-pull resistors */
-    port->PUPDR |= (GPIO_PULLDOWN << (2 * pin));
+void init_gpio_input(GPIO_TypeDef *port, uint8_t pin) {
+	port->MODER &= ~(3 << (2 * pin)); /* configure pin as input */
+	port->PUPDR &= ~(3 << (2 * pin)); /* configure push-pull resistors */
+	port->PUPDR |= (GPIO_PULLDOWN << (2 * pin));
 }
 
 int main(void) {
-	board_init();	// wird fuer den STM32F4 im reset_handler() schon ausgefuehrt
+	board_init();// wird fuer den STM32F4 im reset_handler() schon ausgefuehrt
 	puts("Hello World!\r\n");
 
 //	uart_init();
@@ -212,36 +216,46 @@ int main(void) {
 	transceiver_init(TRANSCEIVER_CC2420);
 	kernel_pid_t transceiver_pid = transceiver_start();
 
-//	int transceiver_pid = transceiver_start(); 	// start transceiver thread
 //	DEBUG("Transceiver started on thread %d", transceiver_pid);
-//
-
 
 //	cc2420_init(KERNEL_PID_LAST + 1);
 	printf("cc2420 transceiver_init with pid %d\r\n", transceiver_pid);
 //	cc2420_init(transceiver_pid);
 
-	config_receiver();
-	while(1){
+	/**
+	 * CC2420 initialization completed
+	 */
+	cc2420_radio_driver.init();
+	cc2420_radio_driver.on();
+
+	while (!cc2420_is_on()) {
+		LED_RED_ON;
 	}
+	LED_RED_OFF;
+	LED_GREEN_ON;
 
-	//	cc2420_radio_driver.send
-
-	// create cc2420 packet and send it
-	cc2420_packet_t cc2420_packet;
+#ifdef USE_SENDER
+//	config_sender();
+//	send_test_data();
+#else
+	config_receiver();
+#endif
 
 //	cc2420_packet_t *cc2420_rx_buffer = (cc2420_packet_t*) malloc(sizeof(cc2420_packet_t));
-	uint8_t buf;
+
 //	ieee802154_node_addr_t *dest = (ieee802154_node_addr_t*) malloc(sizeof(ieee802154_node_addr_t));
 //	dest->long_addr = 0x1;
 //	dest->pan.addr = 0x1;
 //	dest->pan.id = 0x1;
 
+
+	// create cc2420 packet and send it
+	cc2420_packet_t cc2420_packet;
+
 //	ieee802154_frame_init(&cc2420_packet.frame, &buf);
 	cc2420_send(&cc2420_packet);
 //	cc2420_radio_driver.send(PACKET_KIND_DATA, dest, true, true, &buf, sizeof(buf));
 	//(&cc2420_packet, dest, true, true &buf)
-
 
 //	/* set channel to CCNL_CHAN */
 //	msg_t mesg;
@@ -266,27 +280,27 @@ int main(void) {
 
 //	ieee802154_frame_get_hdr_len (&frame);
 
-		while (1) {
+	while (1) {
 //		LED_GREEN_ON;
 
-			LD6_OFF;	// blue
+		LD6_OFF;	// blue
 
-			sleep(2);
+		sleep(2);
 
-			LD6_ON;		// blue
+		LD6_ON;		// blue
 
 //		LED_GREEN_OFF;
 //		printf("UART0 Bufsize: %d\r\n", UART0_BUFSIZE);
 //		thread_print_all();
-			sleep(2);
+		sleep(2);
 
 //		gpio_write(GPIO_0, 0);
 //		spi_transfer_byte(SPI_0, 't',&a);
 //		gpio_write(GPIO_0, 1);
-			if (a != '\0') {
-				sleep(2);
-			}
+		if (a != '\0') {
+			sleep(2);
 		}
-
-		return 0;
 	}
+
+	return 0;
+}

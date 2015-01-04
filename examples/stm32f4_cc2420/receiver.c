@@ -9,12 +9,6 @@ void receiver_callback(void *buf, unsigned int len, int8_t rssi, uint8_t lqi, bo
 }
 
 void config_receiver(void){
-	/**
-		 * CC2420 initialization completed
-		 */
-		cc2420_radio_driver.init();
-		cc2420_radio_driver.on();
-
 		while (!cc2420_is_on()) {
 			LED_RED_ON;
 		}
